@@ -15,7 +15,6 @@ def extract_cloud_provider(cloud_name: str) -> str:
 @cache.cached(timeout=60 * 60, query_string=True)
 def get_all_clouds(query: cloud_model.GetCloudsInput) -> cloud_model.CloudResponse:
     response = requests.get(constants.CLOUD_API_URL).json()
-    print(response)
     if 'errors' in response:
         raise AivenApiException("Aiven Api errors", 400)
 

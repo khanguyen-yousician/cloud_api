@@ -1,8 +1,3 @@
-from typing import Optional
-
-import pydantic
-from pydantic import Field
-
 from packages.aiven_api import cloud as cloud_api
 from packages.aiven_api.models import cloud as cloud_model
 from flask_pydantic import validate
