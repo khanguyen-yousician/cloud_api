@@ -1,0 +1,47 @@
+version: 2.1
+
+jobs:
+
+  test:
+    docker:
+      - image: circleci/python:3.9-buster-browsers-legacy
+
+    steps:
+      - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.9/site-packages
+      - restore_cache:  # ensure this step occurs *before* installing dependencies
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - run:
+          command: |
+            sudo pip install pipenv
+            pipenv install --dev
+      - save_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.9/site-packages"
+      - run:
+          command: |
+            pipenv install flake8
+            pipenv run flake8
+      - run: pipenv run pytest
+
+
+  build:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          command: |
+            TAG="${CIRCLE_BUILD_NUM}"
+            docker build -t cloud_api:$TAG .
+
+workflows:
+  ci-workflow:
+    jobs:
+      - test
+      - build
