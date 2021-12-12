@@ -56,9 +56,12 @@ class GetCloudsInput(pydantic.BaseModel):
     @pydantic.root_validator()
     def long_lat_coexist(cls, values: Dict[str, Any]):
         print(values)
-        if values.get("latitude") is not None and values.get("longitude") is None:
+        if values.get("latitude") is not None\
+                and values.get("longitude") is None:
             raise ValueError("Both latitude and longitude must exist")
-        elif values.get("longitude") is not None and values.get("latitude") is None:
+
+        elif values.get("longitude") is not None\
+                and values.get("latitude") is None:
             raise ValueError("Both latitude and longitude must exist")
 
         return values

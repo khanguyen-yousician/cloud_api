@@ -99,9 +99,8 @@ class TestCloudApi(unittest.TestCase):
                 }
             ]
         }
-        response = self.client.get(f'/cloud_providers')
+        response = self.client.get('/cloud_providers')
         assert response.json == cloud_providers
-
 
     def test_fetch_cloud_regions(self):
         supported_regions = {
@@ -118,7 +117,7 @@ class TestCloudApi(unittest.TestCase):
             ]
         }
 
-        response = self.client.get(f'/regions')
+        response = self.client.get('/regions')
         assert response.json == supported_regions
 
 

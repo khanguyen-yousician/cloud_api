@@ -13,7 +13,10 @@ def extract_cloud_provider(cloud_name: str) -> str:
 
 
 @cache.cached(timeout=60 * 60, query_string=True)
-def get_all_clouds(query: cloud_model.GetCloudsInput) -> cloud_model.CloudResponse:
+def get_all_clouds(
+        query: cloud_model.GetCloudsInput
+) -> cloud_model.CloudResponse:
+
     response = requests.get(constants.CLOUD_API_URL).json()
     if 'errors' in response:
         raise AivenApiException("Aiven Api errors", 400)
@@ -22,16 +25,19 @@ def get_all_clouds(query: cloud_model.GetCloudsInput) -> cloud_model.CloudRespon
 
     if query.region:
         print(f'region = {query.region.value}')
-        all_clouds.clouds = [filtered_cloud for filtered_cloud in all_clouds.clouds
-                             if filtered_cloud.geo_region == query.region.value]
+        all_clouds.clouds = [
+            filtered_cloud for filtered_cloud in all_clouds.clouds
+            if filtered_cloud.geo_region == query.region.value
+        ]
 
     if query.provider:
-        print(query.provider.value)
-        all_clouds.clouds = [filtered_cloud for filtered_cloud in all_clouds.clouds
-                             if extract_cloud_provider(filtered_cloud.cloud_name) == query.provider.value]
+        all_clouds.clouds = [
+            filtered_cloud for filtered_cloud in all_clouds.clouds
+            if extract_cloud_provider(filtered_cloud.cloud_name) == query.provider.value
+        ]
 
     if query.longitude is not None and query.latitude is not None:
-        all_clouds.clouds.sort(key = lambda x: distance(
+        all_clouds.clouds.sort(key=lambda x: distance(
             [query.latitude, query.longitude],
             [x.geo_latitude, x.geo_longitude])
         )
